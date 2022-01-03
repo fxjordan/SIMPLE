@@ -72,11 +72,11 @@ class RemoveAction(AbstractAction):
         if not self.is_legal(mill_env):
             raise Exception('Illegal action' + str(self))
 
-        # place a new piece for current player
-        mill_env.board[self.target_field_id] = mill_env.current_player.piece_id
+        # remove piece
+        mill_env.board[self.target_field_id] = EMPTY_FIELD
 
-        # Check for new mill around target_field
-        return is_field_part_of_mill(mill_env.board, self.target_field_id, mill_env.current_player.piece_id)
+        # no need to check for new built mill
+        return False
 
     def is_legal(self, mill_env):
         if self.is_always_illegal():
