@@ -1,0 +1,86 @@
+O--------O--------O
+|        |        |
+|  O-----O-----O  |
+|  |     |     |  |
+|  |  O--O--O  |  |
+|  |  |     |  |  |
+O--O--O     O--O--O
+|  |  |     |  |  |
+|  |  O--O--O  |  |
+|  |     |     |  |
+|  O-----O-----O  |
+|        |        |
+O--------O--------O
+
+
+===> "data"
+
+FIELD_IDs:
+
+O --------- 1 --------- 2
+|           |           |
+|   3 ----- 4 ----- 5   |
+|   |       |       |   |
+|   |   6 - 7 - 8   |   |
+|   |   |       |   |   |
+9 - 10- 11      12- 13- 14
+|   |   |       |   |   |
+|   |   15 -16 -17  |   |
+|   |       |       |   |
+|   18 -- - 19 ---- 20  |
+|           |           |
+21 -------- 22 -------- 23
+
+
+7x7 matrix with 'unused' fields to keep 2D shape of observation
+
+[
+  [0,_,_,0,_,_,0],
+  [_,0,_,0,_,0,_],
+  [_,_,0,0,0,_,_],
+  [0,0,0,_,0,0,0],
+  [_,_,0,0,0,_,_],
+  [_,0,_,0,_,0,_],
+  [0,_,_,0,_,_,0]
+]
+additional features in observation space:
+
+- game phase: placing pieces, moving pieces, remove opponent piece, jump)
+- num_pieces: int > 0
+- num_pieces_opponent: int > 0
+- opponent_can_jump: 0, 1
+
+actions:
+
+action = "action_type + field_id + direction"
+
+action_type e [0,1,2] (place piece, move piece, remove piece, jump)
+
+field_id e [0,...,23] (fields from top-left, to bottom-right)
+NUM_FIELDS   = 24
+MAX_FIELD_ID = 23
+
+direction e [0,1,2,3] (left, right, up, down)
+NUM_DIRECTIONS = 4
+
+some combinations may always be invalid (e.g., action 0 => field_id=0, dir=0 => move piece from top-left to the left => invalid)
+
+PLACE_ACTION:
+action = field_id
+PLACE_ACTION_SIZE = NUM_FIELDS
+MAX_PLACE_ACTION = PLACE_ACTION_SIZE - 1
+
+REMOVE_ACTION:
+action = MAX_PLACE_ACTION + 1 + field_id
+REMOVE_ACTION_SIZE = NUM_FIELDS
+MAX_REMOVE_ACTION = MAX_PLACE_ACTION + REMOVE_ACTION_SIZE
+
+MOVE_ACTION:
+action = MAX_REMOVE_ACTION + 1 + field_id + direction
+MOVE_ACTION_SIZE = NUM_FIELDS + NUM_DIRECTIONS
+MAX_MOVE_ACTION = MAX_REMOVE_ACTION + MOVE_ACTION_SIZE
+
+JUMP_ACTION:
+action = MAX_MOVE_ACTION + 1 + field_id + field_id
+JUMP_ACTION_SIZE = NUM_FIELDS + NUM_FIELDS
+MAX_JUMP_ACTION = MAX_MOVE_ACTION + JUMP_ACTION_SIZE
