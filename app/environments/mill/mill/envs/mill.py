@@ -346,7 +346,9 @@ class MillEnv(gym.Env):
 
     @property
     def legal_actions(self):
-        return filter(lambda action: action.is_legal(self), self.actions)
+        legal_actions = filter(lambda action: action.is_legal(self), self.actions)
+
+        return range(MAX_JUMP_ACTION)
 
     def check_game_over(self, mill_built):
         other_player_num = (self.current_player_num + 1) % 2
@@ -475,7 +477,8 @@ class MillEnv(gym.Env):
         output = RENDER_TEMPLATE
         for field_id in range(NUM_FIELDS):
             symbol = get_symbol_for_field_state(self.board[field_id])
-            output = output[:field_id] + symbol + output[field_id + 1:]
+            index = TEMPLATE_INDICES[field_id]
+            output = output[:index] + symbol + output[index + 1:]
 
         logger.debug(output)
 
@@ -503,7 +506,7 @@ def decode_place_action(action):
     assert 0 <= action <= MAX_PLACE_ACTION
 
     target_field_id = action
-    return target_field_id
+    return PlaceAction(target_field_id)
 
 
 # REMOVE_ACTION:
@@ -548,7 +551,7 @@ def decode_jump_action(action):
 
     target_field_id = action_without_offset % NUM_FIELDS
     origin_field_id = (action_without_offset - target_field_id) / NUM_FIELDS
-    return origin_field_id, target_field_id
+    return JumpAction(origin_field_id, target_field_id)
 
 
 def decode_action(action):
