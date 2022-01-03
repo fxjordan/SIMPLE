@@ -43,6 +43,9 @@ class PlaceAction(AbstractAction):
         # place a new piece for current player
         mill_env.board[self.target_field_id] = mill_env.current_player.piece_id
 
+        # reduce number of pieces left to place
+        mill_env.current_player.pieces_to_place -= 1
+
         # Check for new mill around target_field
         return is_field_part_of_mill(mill_env.board, self.target_field_id, mill_env.current_player.piece_id)
 
