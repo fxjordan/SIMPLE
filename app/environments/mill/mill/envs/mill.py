@@ -372,10 +372,10 @@ class MillEnv(gym.Env):
             # Since opponent only has 3 pieces the current player wins the game
             return 1, True
 
-        # check draw (can next player move?)
+        # check win by no move (can next player move?)
         if not self.has_player_any_move(other_player_num):
             logger.debug("Other player has no moves. Current player wins!")
-            return  1, True
+            return 1, True
 
         return 0, False
 
@@ -392,6 +392,11 @@ class MillEnv(gym.Env):
 
     def has_player_any_move(self, player_num):
         piece_id = self.players[player_num]
+
+        if self.players[player_num].pieces_to_place > 0:
+            # player is still in phase of placing pieces on board
+            # there is definitely a possible move
+            return True
 
         if self.count_pieces(piece_id) == 3:
             # player can jump, so an action is definitely possible
