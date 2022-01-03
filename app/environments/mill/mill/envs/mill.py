@@ -497,6 +497,7 @@ class MillEnv(gym.Env):
             logger.debug(f'GAME OVER')
         else:
             logger.debug(f"It is Player {self.current_player.id}'s turn to move")
+            logger.debug('Game phase: ' + GAME_PHASE_STR[self.game_phase])
             
         # actual render
         output = RENDER_TEMPLATE
@@ -622,3 +623,6 @@ def get_symbol_for_field_state(field_state):
         return 'X'
     else:
         raise Exception('Invalid field state: ' + field_state)
+
+
+GAME_PHASE_STR = ['Place Piece', 'Move Piece', 'Remove Opponent Piece', 'Jump with Piece']
