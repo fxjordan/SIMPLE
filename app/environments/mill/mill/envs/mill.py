@@ -88,7 +88,14 @@ class RemoveAction(AbstractAction):
         other_player_piece_id = mill_env.players[other_player_num].piece_id
 
         # target field must be a piece of opponent
-        return mill_env.board[self.target_field_id] == other_player_piece_id
+        if mill_env.board[self.target_field_id] != other_player_piece_id:
+            return False
+
+        # Check if target is part of mill (cannot be removed)
+        if is_field_part_of_mill(mill_env.board, self.target_field_id, other_player_piece_id):
+            return False
+
+        return True
 
     def __str__(self):
         return 'RemoveAction(target=' + str(self.target_field_id) + ')'
