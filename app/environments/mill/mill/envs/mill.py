@@ -53,7 +53,10 @@ class PlaceAction(AbstractAction):
             return False
 
         # target field must be empty
-        return mill_env.board[self.target_field_id] != EMPTY_FIELD
+        return mill_env.board[self.target_field_id] is EMPTY_FIELD
+
+    def __str__(self):
+        return 'PlaceAction(target=' + str(self.target_field_id) + ')'
 
 
 class RemoveAction(AbstractAction):
@@ -83,6 +86,9 @@ class RemoveAction(AbstractAction):
 
         # target field must be a piece of opponent
         return mill_env.board[self.target_field_id] == other_player_piece_id
+
+    def __str__(self):
+        return 'RemoveAction(target=' + str(self.target_field_id) + ')'
 
 
 class MoveAction(AbstractAction):
@@ -122,10 +128,13 @@ class MoveAction(AbstractAction):
 
         # 2. target field must be empty
         target_field = get_field_in_direction(self.field_id, self.direction)
-        if mill_env.board[target_field] != 0:
+        if mill_env.board[target_field] != EMPTY_FIELD:
             return False
 
         return True
+
+    def __str__(self):
+        return 'MoveAction(field_id=' + str(self.field_id) + ', dir=' + self.direction + ')'
 
 
 class JumpAction(AbstractAction):
@@ -162,6 +171,9 @@ class JumpAction(AbstractAction):
             return False
 
         return True
+
+    def __str__(self):
+        return 'JumpAction(origin_field=' + str(self.origin_field_id) + ', target_field=' + self.target_field_id + ')'
 
 
 GAME_PHASE_PLACE_PIECES = 0
@@ -408,9 +420,14 @@ class MillEnv(gym.Env):
 
         reward = [0, 0]
 
+        logger.debug('Doing step (action: ' + str(action) + ')')
+        logger.debug('Current game phase: ' + str(self.game_phase))
+
         decoded_action = decode_action(action)
+        logger.debug('decoded action: ' + str(decoded_action))
 
         if not decoded_action.is_legal(self):
+            logger.debug('Illegal action!')
             done = True
             reward = [1, 1]
             reward[self.current_player_num] = -1
